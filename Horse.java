@@ -1,6 +1,6 @@
 public class Horse {
-  public static final int HEALTHY_CHANCE = 0.7;
-  public static int nextId = 0;
+  public static final double HEALTHY_CHANCE = 0.7;
+  private static int nextId = 1;
 
   private final int id;
   private boolean healthy = true;
