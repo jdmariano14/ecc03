@@ -27,16 +27,16 @@ public class Horse {
   }
 
   private int move(int min, int max) {
-    int displacement = min;
-
-    displacement += (int)(Math.random() * (max - min));
-    displacement = Math.min(0, displacement + offset);
-
+    int displacement = min + (int)(Math.random() * (max - min));
+    
     return displacement;
   }
 
   public int move(int offset) {
-    return move(DEFAULT_MIN_SPEED + offset, DEFAULT_MAX_SPEED + offset);
+    int min = Math.max(0, DEFAULT_MIN_SPEED + offset);
+    int max = Math.max(0, DEFAULT_MAX_SPEED + offset);
+
+    return move(min, max);
   }
   
   public int move() {
