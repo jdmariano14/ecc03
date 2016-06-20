@@ -10,18 +10,10 @@ public class Exercise3 {
 
     Stream.generate(() -> new Horse())
           .limit(10)
-          .peek(e -> e.determineHealth())
-          .forEach(h -> segregateHorseByHealth(h));
+          .peek(h -> System.out.println(h.determineHealth()))
+          .filter(h -> h.isHealthy())
+          .forEach(h -> healthyHorses.add(h));
 
     System.out.println(healthyHorses.size());
-  }
-
-  private static void segregateHorseByHealth(Horse h) {
-    if (h.isHealthy()) {
-      healthyHorses.add(h); 
-      System.out.println(h + " is healthy.");
-    } else {
-      System.out.println(h + " is not healthy.");
-    }
   }
 }
