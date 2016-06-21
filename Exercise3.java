@@ -34,7 +34,8 @@ public class Exercise3 {
 
     Set<Callable<HorseTime>> finishLineMovers = 
       healthyHorses.stream()
-      .map(h -> new HorseMover(h, 10 + 50, true))
+      .peek(h -> HorsePlaces.submit(h.getId(), h.getPosition()))
+      .map(h -> new HorseMover(h, 10 + 20, true))
       .collect(Collectors.toSet());
 
     Function<Future<HorseTime>, HorseTime> getHorseTime = f -> {
@@ -66,7 +67,7 @@ public class Exercise3 {
       result.append(place + ". ");
       result.append("Horse " + time.getId() + " - +");
       result.append(time.getTime() - bestTime);
-      result.append("ms");
+      result.append("ns");
 
       System.out.println(result);
 
