@@ -1,19 +1,78 @@
+import java.util.*;
 import java.util.stream.*;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.concurrent.*;
+
+import java.util.function.*;
 
 public class Exercise3 {
-  private static Set<Horse> healthyHorses;
 
   public static void main(String [] args) {
-    healthyHorses = new HashSet();
+    Set<Horse> healthyHorses = new HashSet();
 
     Stream.generate(() -> new Horse())
-          .limit(10)
+          .limit(30)
           .peek(h -> System.out.println(h.determineHealth()))
           .filter(h -> h.isHealthy())
           .forEach(h -> healthyHorses.add(h));
 
-    System.out.println(healthyHorses.size());
+    ExecutorService pool = Executors.newFixedThreadPool(healthyHorses.size());
+
+    Set<Callable<HorseTime>> startingLineMovers =
+      healthyHorses.stream()
+      .map(h -> new HorseMover(h, 10, false))
+      .collect(Collectors.toSet());
+
+    try {
+      pool.invokeAll(startingLineMovers);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("");
+    System.out.println("All horses at starting line");
+    System.out.println("");
+
+    Set<Callable<HorseTime>> finishLineMovers = 
+      healthyHorses.stream()
+      .map(h -> new HorseMover(h, 10 + 50, true))
+      .collect(Collectors.toSet());
+
+    Function<Future<HorseTime>, HorseTime> getHorseTime = f -> {
+      try {
+        return f.get();
+      }
+      catch (Exception e) {
+        return null;
+      }
+    };
+
+    SortedSet<HorseTime> times = null;
+    try {
+      times = pool.invokeAll(finishLineMovers)
+              .stream()
+              .map(getHorseTime)
+              .collect(Collectors.toCollection(TreeSet::new));
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println();
+    System.out.println("Results: ");
+
+    int place = 1;
+    long bestTime = times.first().getTime();
+    for (HorseTime time : times) {
+      StringBuilder result = new StringBuilder();
+      result.append(place + ". ");
+      result.append("Horse " + time.getId() + " - +");
+      result.append(time.getTime() - bestTime);
+      result.append("ms");
+
+      System.out.println(result);
+
+      place++;
+    }
+
+    pool.shutdown();
   }
 }

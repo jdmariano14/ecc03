@@ -14,6 +14,10 @@ public class Horse {
     nextId++;
   }
 
+  public int getId() {
+    return id;
+  }
+
   public int getPosition() {
     return position;
   }
@@ -28,13 +32,15 @@ public class Horse {
 
   private int move(int min, int max) {
     int displacement = min + (int)(Math.random() * (max - min));
-    
+
+    position += displacement;
+
     return displacement;
   }
 
   public int move(int offset) {
-    int min = Math.max(0, DEFAULT_MIN_SPEED + offset);
-    int max = Math.max(0, DEFAULT_MAX_SPEED + offset);
+    int min = (int)(Math.max(0, DEFAULT_MIN_SPEED + offset));
+    int max = (int)(Math.max(0, DEFAULT_MAX_SPEED + offset));
 
     return move(min, max);
   }
