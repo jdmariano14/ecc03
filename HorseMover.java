@@ -18,17 +18,18 @@ public class HorseMover implements Callable<HorseTime> {
 
   public HorseTime call() {
     while (horse.getPosition() < destination) {
-      boolean lastPlace = horse.getPosition() <= leaderboard.getLastPlacePosition();
-      
-      synchronized (leaderboard) {
-        if (horse.getPosition() <= leaderboard.getLastPlacePosition()) {
+
+      //synchronized (leaderboard) {
+        if (horse.equals(leaderboard.getLastPlacer())) {
           horse.moveLastPlace(output);
         } else {
           horse.move(output);
         }
-      }
 
-      if (horse.getPosition() > destination && !exceed) {
+        leaderboard.update(horse);
+      //}
+
+      if (!exceed && horse.getPosition() > destination) {
         horse.setPosition(destination);
       }
     }

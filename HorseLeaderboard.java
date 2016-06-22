@@ -3,14 +3,23 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public class HorseLeaderboard {
-  private Set<Horse> board;
+  private PriorityQueue<Horse> board;
 
   public HorseLeaderboard() {
-    board = new HashSet();
+    Comparator<Horse> byPosition = 
+      (Horse h1, Horse h2) -> Integer.compare(h1.getPosition(), h2.getPosition());
+
+    board = new PriorityQueue(byPosition);
   }
 
   public synchronized void add(Horse h) {
     board.add(h);
+  }
+
+  public synchronized void update(Horse h) {
+    if (board.remove(h)) {
+      board.add(h);
+    }
   }
 
   public synchronized int size() {
@@ -19,6 +28,10 @@ public class HorseLeaderboard {
 
   public synchronized Stream<Horse> stream() {
     return board.stream();
+  }
+
+  public synchronized Horse getLastPlacer() {
+    return board.peek();
   }
 
   public synchronized int getLastPlacePosition() {

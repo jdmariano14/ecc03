@@ -11,6 +11,7 @@ public class Horse {
   private final int id;
   private int position = 0;
   private boolean healthy = true;
+  private boolean lastPlace = false;
 
   public Horse() {
     id = nextId;
