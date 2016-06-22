@@ -1,7 +1,10 @@
+import java.util.function.*;
+
 public class Horse {
   public static final double HEALTHY_CHANCE = 0.7;
-  public static final double DEFAULT_MIN_SPEED = 1;
-  public static final double DEFAULT_MAX_SPEED = 5;
+  public static final int DEFAULT_MIN_SPEED = 1;
+  public static final int DEFAULT_MAX_SPEED = 5;
+  public static final int DEFAULT_BOOST = 2;
 
   private static int nextId = 1;
 
@@ -30,23 +33,28 @@ public class Horse {
     position = pos;
   }
 
-  private int move(int min, int max) {
+  private void move(int min, int max, String msg, Consumer<String> con) {
     int displacement = min + (int)(Math.random() * (max - min));
-
+    int oldPos = position;
     position += displacement;
 
-    return displacement;
+    con.accept(String.format(msg, displacement, oldPos, position));
   }
 
-  public int move(int offset) {
-    int min = (int)(Math.max(0, DEFAULT_MIN_SPEED + offset));
-    int max = (int)(Math.max(0, DEFAULT_MAX_SPEED + offset));
+  public void move(Consumer<String> con) {
+    int min = DEFAULT_MIN_SPEED;
+    int max = DEFAULT_MAX_SPEED;
+    String msg = this + " moved %d, from %d to %d";
 
-    return move(min, max);
+    move(min, max, msg, con);
   }
-  
-  public int move() {
-    return move(0);
+
+  public void moveLastPlace(Consumer<String> con) {
+    int min = DEFAULT_MIN_SPEED + DEFAULT_BOOST;
+    int max = DEFAULT_MAX_SPEED + DEFAULT_BOOST;
+    String msg = this + " moved %d, from %d to %d (with last place boost)";
+
+    move(min, max, msg, con);
   }
 
   public boolean isHealthy() {

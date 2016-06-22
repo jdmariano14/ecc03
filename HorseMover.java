@@ -14,17 +14,18 @@ public class HorseMover implements Callable<HorseTime> {
   public HorseTime call() {
     while (horse.getPosition() < destination) {
       boolean lastPlace = horse.getPosition() <= HorsePlaces.getLastPlace();
-      horse.move(lastPlace ? 2 : 0);
+      
+      if (lastPlace) {
+        horse.moveLastPlace(System.out::println);
+      } else {
+        horse.move(System.out::println);
+      }
+
       HorsePlaces.submit(horse.getId(), horse.getPosition());
 
       if (horse.getPosition() > destination && !exceed) {
         horse.setPosition(destination);
       }
-
-      if (lastPlace && destination > 10) {
-        System.out.println(horse + " was in last place!");
-      }
-      System.out.println(horse + " is at position " + horse.getPosition() + ".");
     }
 
     return new HorseTime(horse.getId(), System.nanoTime());
