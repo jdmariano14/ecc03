@@ -11,7 +11,7 @@ public class Exercise3 {
 
     Stream.generate(() -> new Horse())
           .limit(30)
-          .peek(h -> System.out.println(h.determineHealth()))
+          .peek(h -> h.determineHealth(System.out::println))
           .filter(h -> h.isHealthy())
           .forEach(h -> healthyHorses.add(h));
 

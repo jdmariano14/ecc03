@@ -33,42 +33,42 @@ public class Horse {
     position = pos;
   }
 
-  private void move(int min, int max, String msg, Consumer<String> con) {
+  private void move(int min, int max, String msg, Consumer<String> output) {
     int displacement = min + (int)(Math.random() * (max - min));
     int oldPos = position;
     position += displacement;
 
-    con.accept(String.format(msg, displacement, oldPos, position));
+    output.accept(String.format(msg, displacement, oldPos, position));
   }
 
-  public void move(Consumer<String> con) {
+  public void move(Consumer<String> output) {
     int min = DEFAULT_MIN_SPEED;
     int max = DEFAULT_MAX_SPEED;
     String msg = this + " moved %d, from %d to %d";
 
-    move(min, max, msg, con);
+    move(min, max, msg, output);
   }
 
-  public void moveLastPlace(Consumer<String> con) {
+  public void moveLastPlace(Consumer<String> output) {
     int min = DEFAULT_MIN_SPEED + DEFAULT_BOOST;
     int max = DEFAULT_MAX_SPEED + DEFAULT_BOOST;
     String msg = this + " moved %d, from %d to %d (with last place boost)";
 
-    move(min, max, msg, con);
+    move(min, max, msg, output);
   }
 
   public boolean isHealthy() {
     return healthy;
   }
 
-  public String determineHealth() {
+  public void determineHealth(Consumer<String> output) {
     healthy = Math.random() > (1.0 - HEALTHY_CHANCE);
 
-    String message = healthy
-                     ? this + " is healthy."
-                     : this + " is not healthy.";
+    String msg = healthy
+                 ? this + " is healthy."
+                 : this + " is not healthy.";
 
-    return message;
+    output.accept(msg);
   }
 
   @Override
