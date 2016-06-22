@@ -1,14 +1,17 @@
+import java.util.function.*;
 import java.util.concurrent.Callable;
 
 public class HorseMover implements Callable<HorseTime> {
   private Horse horse;
   private int destination;
   private boolean exceed;
+  private Consumer<String> output;
 
-  public HorseMover(Horse h, int dest, boolean exceed) {
+  public HorseMover(Horse h, int dest, boolean exceed, Consumer<String> out) {
     this.horse = h;
     this.exceed = exceed;
     this.destination = dest;
+    this.output = out;
   }
 
   public HorseTime call() {
@@ -16,9 +19,9 @@ public class HorseMover implements Callable<HorseTime> {
       boolean lastPlace = horse.getPosition() <= HorsePlaces.getLastPlace();
       
       if (lastPlace) {
-        horse.moveLastPlace(System.out::println);
+        horse.moveLastPlace(output);
       } else {
-        horse.move(System.out::println);
+        horse.move(output);
       }
 
       HorsePlaces.submit(horse.getId(), horse.getPosition());

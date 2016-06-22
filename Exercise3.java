@@ -1,25 +1,28 @@
 import java.util.*;
 import java.util.stream.*;
 import java.util.concurrent.*;
-
 import java.util.function.*;
 
 public class Exercise3 {
+
+  private static final Consumer<String> DEFAULT_OUTPUT = System.out::println;
 
   public static void main(String [] args) {
     Set<Horse> healthyHorses = new HashSet();
 
     Stream.generate(() -> new Horse())
           .limit(30)
-          .peek(h -> h.determineHealth(System.out::println))
+          .peek(h -> h.determineHealth(DEFAULT_OUTPUT))
           .filter(h -> h.isHealthy())
           .forEach(h -> healthyHorses.add(h));
+
+    System.out.println("");
 
     ExecutorService pool = Executors.newFixedThreadPool(healthyHorses.size());
 
     Set<Callable<HorseTime>> startingLineMovers =
       healthyHorses.stream()
-      .map(h -> new HorseMover(h, 10, false))
+      .map(h -> new HorseMover(h, 10, false, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     try {
@@ -35,7 +38,7 @@ public class Exercise3 {
     Set<Callable<HorseTime>> finishLineMovers = 
       healthyHorses.stream()
       .peek(h -> HorsePlaces.submit(h.getId(), h.getPosition()))
-      .map(h -> new HorseMover(h, 10 + 20, true))
+      .map(h -> new HorseMover(h, 10 + 20, true, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     Function<Future<HorseTime>, HorseTime> getHorseTime = f -> {
