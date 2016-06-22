@@ -20,8 +20,8 @@ public class HorseMover implements Callable<HorseTime> {
     while (horse.getPosition() < destination) {
       boolean lastPlace = horse.getPosition() <= leaderboard.getLastPlacePosition();
       
-      synchronized(leaderboard) {
-        if (lastPlace) {
+      synchronized (leaderboard) {
+        if (horse.getPosition() <= leaderboard.getLastPlacePosition()) {
           horse.moveLastPlace(output);
         } else {
           horse.move(output);

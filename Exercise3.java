@@ -11,7 +11,7 @@ public class Exercise3 {
     HorseLeaderboard leaderboard = new HorseLeaderboard();
 
     Stream.generate(() -> new Horse())
-          .limit(30)
+          .limit(10)
           .peek(h -> h.determineHealth(DEFAULT_OUTPUT))
           .filter(h -> h.isHealthy())
           .forEach(h -> leaderboard.add(h));
@@ -38,7 +38,7 @@ public class Exercise3 {
 
     Set<Callable<HorseTime>> finishLineMovers = 
       leaderboard.stream()
-      .map(h -> new HorseMover(h, leaderboard, 10 + 20, true, DEFAULT_OUTPUT))
+      .map(h -> new HorseMover(h, leaderboard, 10 + 100, true, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     Function<Future<HorseTime>, HorseTime> getHorseTime = f -> {

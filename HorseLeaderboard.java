@@ -9,30 +9,23 @@ public class HorseLeaderboard {
     board = new HashSet();
   }
 
-  public void add(Horse h) {
+  public synchronized void add(Horse h) {
     board.add(h);
   }
 
-  public int size() {
-    int size = 0;
-
-    synchronized (board) {
-      size = board.size();
-    }
-
-    return size;
+  public synchronized int size() {
+    return board.size();
   }
 
   public synchronized Stream<Horse> stream() {
     return board.stream();
   }
 
-  public int getLastPlacePosition() {
-    int lastPos;
-
-    synchronized (board) {
-      lastPos = board.stream().mapToInt(h -> h.getPosition()).reduce(Integer.MAX_VALUE, Integer::min);
-    }
+  public synchronized int getLastPlacePosition() {
+    int lastPos = board
+                  .stream()
+                  .mapToInt(h -> h.getPosition())
+                  .reduce(Integer.MAX_VALUE, Integer::min);
 
     return lastPos;
   }
