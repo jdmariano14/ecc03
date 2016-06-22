@@ -3,12 +3,14 @@ import java.util.concurrent.Callable;
 
 public class HorseMover implements Callable<HorseTime> {
   private Horse horse;
+  private HorseLeaderboard leaderboard;
   private int destination;
   private boolean exceed;
   private Consumer<String> output;
 
-  public HorseMover(Horse h, int dest, boolean exceed, Consumer<String> out) {
+  public HorseMover(Horse h, HorseLeaderboard board, int dest, boolean exceed, Consumer<String> out) {
     this.horse = h;
+    this.leaderboard = board;
     this.exceed = exceed;
     this.destination = dest;
     this.output = out;
@@ -16,15 +18,15 @@ public class HorseMover implements Callable<HorseTime> {
 
   public HorseTime call() {
     while (horse.getPosition() < destination) {
-      boolean lastPlace = horse.getPosition() <= HorsePlaces.getLastPlace();
+      boolean lastPlace = horse.getPosition() <= leaderboard.getLastPlacePosition();
       
-      if (lastPlace) {
-        horse.moveLastPlace(output);
-      } else {
-        horse.move(output);
+      synchronized(leaderboard) {
+        if (lastPlace) {
+          horse.moveLastPlace(output);
+        } else {
+          horse.move(output);
+        }
       }
-
-      HorsePlaces.submit(horse.getId(), horse.getPosition());
 
       if (horse.getPosition() > destination && !exceed) {
         horse.setPosition(destination);

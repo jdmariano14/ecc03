@@ -8,21 +8,22 @@ public class Exercise3 {
   private static final Consumer<String> DEFAULT_OUTPUT = System.out::println;
 
   public static void main(String [] args) {
-    Set<Horse> healthyHorses = new HashSet();
+    HorseLeaderboard leaderboard = new HorseLeaderboard();
 
     Stream.generate(() -> new Horse())
           .limit(30)
           .peek(h -> h.determineHealth(DEFAULT_OUTPUT))
           .filter(h -> h.isHealthy())
-          .forEach(h -> healthyHorses.add(h));
+          .forEach(h -> leaderboard.add(h));
 
     System.out.println("");
 
-    ExecutorService pool = Executors.newFixedThreadPool(healthyHorses.size());
+    ExecutorService pool = Executors.newFixedThreadPool(leaderboard.size());
 
     Set<Callable<HorseTime>> startingLineMovers =
-      healthyHorses.stream()
-      .map(h -> new HorseMover(h, 10, false, DEFAULT_OUTPUT))
+      leaderboard.stream()
+      .peek(System.out::println)
+      .map(h -> new HorseMover(h, leaderboard, 10, false, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     try {
@@ -36,9 +37,8 @@ public class Exercise3 {
     System.out.println("");
 
     Set<Callable<HorseTime>> finishLineMovers = 
-      healthyHorses.stream()
-      .peek(h -> HorsePlaces.submit(h.getId(), h.getPosition()))
-      .map(h -> new HorseMover(h, 10 + 20, true, DEFAULT_OUTPUT))
+      leaderboard.stream()
+      .map(h -> new HorseMover(h, leaderboard, 10 + 20, true, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     Function<Future<HorseTime>, HorseTime> getHorseTime = f -> {
