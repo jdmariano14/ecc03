@@ -9,6 +9,10 @@ public class HorseRace {
     leaderboard = new PriorityQueue();
   }
 
+  public HorseRace(PriorityQueue<Horse> leaderboard) {
+    this.leaderboard = leaderboard;
+  }
+
   public synchronized void add(Horse horse) {
     Horse oldLastPlacer = leaderboard.isEmpty() ? horse : getLastPlacer(); 
 

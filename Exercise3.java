@@ -5,16 +5,18 @@ import java.util.function.*;
 
 public class Exercise3 {
 
+  private static final int STARTING_LINE_DISTANCE = 10;
   private static final Consumer<String> DEFAULT_OUTPUT = System.out::println;
 
   public static void main(String [] args) {
-    HorseRace race = new HorseRace();
 
-    Stream.generate(() -> new Horse(-10))
-          .limit(10)
-          .peek(h -> h.determineHealth(DEFAULT_OUTPUT))
-          .filter(h -> h.isHealthy())
-          .forEach(h -> race.add(h));
+    HorseRace race = new HorseRace(
+      Stream.generate(() -> new Horse(-STARTING_LINE_DISTANCE))
+            .limit(10)  
+            .peek(h -> h.determineHealth(DEFAULT_OUTPUT))
+            .filter(h -> h.isHealthy())
+            .collect(Collectors.toCollection(PriorityQueue::new))
+    );
 
     System.out.println("");
 
