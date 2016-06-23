@@ -2,7 +2,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class HorseRace{
+public class HorseRace {
   private PriorityQueue<Horse> leaderboard;
 
   public HorseRace() {

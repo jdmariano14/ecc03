@@ -1,8 +1,8 @@
 import java.util.function.*;
 
-public class BarnToStartHorseMover extends HorseMover {
+public class NoBoostHorseMover extends HorseMover {
 
-  public BarnToStartHorseMover(Horse horse, HorseRace race, int dest, Consumer<String> out) {
+  public NoBoostHorseMover(Horse horse, HorseRace race, int dest, Consumer<String> out) {
     super(horse, race, dest, out);
   }
 
