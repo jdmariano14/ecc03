@@ -5,7 +5,7 @@ import java.util.function.*;
 
 public class Exercise3 {
   private static final int STARTING_LINE_DISTANCE = 10;
-  private static final int MAX_THREADS = 100;
+  private static final int MAX_THREADS = 1000;
   private static final Scanner INPUT_SCANNER;
   private static final Consumer<String> DEFAULT_OUTPUT = System.out::println;
 
@@ -18,6 +18,8 @@ public class Exercise3 {
     int finishLineDistance = promptUserForInt("Enter the distance to the finish line: ");
     String boostChoice = promptUserForLine("Enable boost? (y/n) ").trim().toLowerCase();
     boolean boost = boostChoice.equals("y");
+
+    System.out.println("");
 
     HorseRace race = new HorseRace(
       Stream.generate(() -> new Horse(-STARTING_LINE_DISTANCE))

@@ -16,7 +16,6 @@ public abstract class HorseMover implements Callable<HorseTime> {
 
   public HorseTime call() {
     while (horse.getPosition() < destination) {
-      race.update(horse);
       moveHorse();
     }
 
