@@ -6,20 +6,36 @@ public class HorseLeaderboard {
   private PriorityQueue<Horse> board;
 
   public HorseLeaderboard() {
-    Comparator<Horse> byPosition = 
-      (Horse h1, Horse h2) -> Integer.compare(h1.getPosition(), h2.getPosition());
-
-    board = new PriorityQueue(byPosition);
+    board = new PriorityQueue();
   }
 
-  public synchronized void add(Horse h) {
-    board.add(h);
+  public synchronized void add(Horse horse) {
+    Horse oldLastPlacer = size() < 1 ? horse : getLastPlacer(); 
+
+    board.add(horse);
+
+    updateLastPlacer(oldLastPlacer);
   }
 
-  public synchronized void update(Horse h) {
-    if (board.remove(h)) {
-      board.add(h);
+  public synchronized void update(Horse horse) {
+    Horse oldLastPlacer = getLastPlacer();
+
+    if (board.remove(horse)) {
+      board.add(horse);
     }
+
+    updateLastPlacer(oldLastPlacer);
+  }
+
+  private synchronized Horse getLastPlacer() {
+    return board.peek();
+  }
+
+  private synchronized void updateLastPlacer(Horse oldLastPlacer) {
+    if (!getLastPlacer().equals(oldLastPlacer))  {
+      getLastPlacer().setLastPlace(true);
+      oldLastPlacer.setLastPlace(false);
+    }    
   }
 
   public synchronized int size() {
@@ -29,18 +45,4 @@ public class HorseLeaderboard {
   public synchronized Stream<Horse> stream() {
     return board.stream();
   }
-
-  public synchronized Horse getLastPlacer() {
-    return board.peek();
-  }
-
-  public synchronized int getLastPlacePosition() {
-    int lastPos = board
-                  .stream()
-                  .mapToInt(h -> h.getPosition())
-                  .reduce(Integer.MAX_VALUE, Integer::min);
-
-    return lastPos;
-  }
-
 }

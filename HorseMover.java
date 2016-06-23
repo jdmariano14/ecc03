@@ -3,35 +3,24 @@ import java.util.concurrent.Callable;
 
 public class HorseMover implements Callable<HorseTime> {
   private Horse horse;
-  private HorseLeaderboard leaderboard;
+  private HorseLeaderboard board;
   private int destination;
-  private boolean exceed;
   private Consumer<String> output;
 
-  public HorseMover(Horse h, HorseLeaderboard board, int dest, boolean exceed, Consumer<String> out) {
+  public HorseMover(Horse h, HorseLeaderboard board, int dest, Consumer<String> out) {
     this.horse = h;
-    this.leaderboard = board;
-    this.exceed = exceed;
+    this.board = board;
     this.destination = dest;
     this.output = out;
   }
 
   public HorseTime call() {
     while (horse.getPosition() < destination) {
+      board.update(horse);
 
-      //synchronized (leaderboard) {
-        if (horse.equals(leaderboard.getLastPlacer())) {
-          horse.moveLastPlace(output);
-        } else {
-          horse.move(output);
-        }
-
-        leaderboard.update(horse);
-      //}
-
-      if (!exceed && horse.getPosition() > destination) {
-        horse.setPosition(destination);
-      }
+      // synchronized (board) {
+        horse.boundedMove(destination, output);
+      // }
     }
 
     return new HorseTime(horse.getId(), System.nanoTime());

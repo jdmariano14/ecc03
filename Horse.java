@@ -1,6 +1,6 @@
 import java.util.function.*;
 
-public class Horse {
+public class Horse implements Comparable<Horse> {
   public static final double HEALTHY_CHANCE = 0.7;
   public static final int DEFAULT_MIN_SPEED = 1;
   public static final int DEFAULT_MAX_SPEED = 5;
@@ -18,6 +18,11 @@ public class Horse {
     nextId++;
   }
 
+  public Horse(int position) {
+    this();
+    this.position = position;
+  }
+
   public int getId() {
     return id;
   }
@@ -26,36 +31,50 @@ public class Horse {
     return position;
   }
 
-  public void setPosition(int pos) throws IllegalArgumentException {
-    if (pos < 0) {
-      throw new IllegalArgumentException();
-    }
-
-    position = pos;
+  public boolean isLastPlace() {
+    return lastPlace;
   }
 
-  private void move(int min, int max, String msg, Consumer<String> output) {
+  public synchronized void setLastPlace(boolean last) {
+    lastPlace = last;
+  }
+
+  private void move(int min, int max, int bound, String msg, Consumer<String> output) {
     int displacement = min + (int)(Math.random() * (max - min));
     int oldPos = position;
     position += displacement;
 
-    output.accept(String.format(msg, displacement, oldPos, position));
+    if (position > bound && bound >= 0) {
+      position = bound;
+    }
+
+    output.accept(String.format(msg, position - oldPos, oldPos, position));
   }
 
-  public void move(Consumer<String> output) {
-    int min = DEFAULT_MIN_SPEED;
-    int max = DEFAULT_MAX_SPEED;
-    String msg = this + " moved %d, from %d to %d";
+  private void defaultMove(int bound, Consumer<String> output) {
+    int min = 0;
+    int max = 0;
+    String msg = "";
 
-    move(min, max, msg, output);
+    if (isLastPlace()) {
+      min = DEFAULT_MIN_SPEED + DEFAULT_BOOST;
+      max = DEFAULT_MAX_SPEED + DEFAULT_BOOST;
+      msg = this + " moved %d, from %d to %d (with last place boost)";
+    } else {
+      min = DEFAULT_MIN_SPEED;
+      max = DEFAULT_MAX_SPEED;
+      msg = this + " moved %d, from %d to %d";
+    }
+
+    move(min, max, bound, msg, output);
   }
 
-  public void moveLastPlace(Consumer<String> output) {
-    int min = DEFAULT_MIN_SPEED + DEFAULT_BOOST;
-    int max = DEFAULT_MAX_SPEED + DEFAULT_BOOST;
-    String msg = this + " moved %d, from %d to %d (with last place boost)";
+  public synchronized void unboundedMove(Consumer<String> output) {
+    defaultMove(-1, output);
+  }
 
-    move(min, max, msg, output);
+  public synchronized void boundedMove(int bound, Consumer<String> output) {
+    defaultMove(bound, output);
   }
 
   public boolean isHealthy() {
@@ -75,5 +94,10 @@ public class Horse {
   @Override
   public String toString() {
     return "Horse " + id;
+  }
+
+  @Override
+  public int compareTo(Horse other) {
+    return Integer.compare(this.getPosition(), other.getPosition());
   }
 }
