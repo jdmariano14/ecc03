@@ -17,6 +17,9 @@ public class Exercise3 {
     int horseCount = promptUserForInt("Enter the number of horses: ");
     int finishLineDistance = promptUserForInt("Enter the distance to the finish line: ");
 
+    String boostChoice = promptUserForLine("Enable boost? (y/n) ").trim().toLowerCase();
+    boolean boost = boostChoice.equals("y");
+
     HorseRace race = new HorseRace(
       Stream.generate(() -> new Horse(-STARTING_LINE_DISTANCE))
             .limit(horseCount)  
@@ -35,7 +38,7 @@ public class Exercise3 {
       }
 
       SortedSet<HorseTime> results = 
-        moveFromStartingLineToFinishLine(race, exec, finishLineDistance);
+        moveFromStartingLineToFinishLine(race, exec, finishLineDistance, boost);
 
       try {
         displayRaceResults(results);
@@ -73,14 +76,22 @@ public class Exercise3 {
   }
 
   private static SortedSet<HorseTime> moveFromStartingLineToFinishLine(HorseRace race, 
-      ExecutorService exec, int finishLineDistance) 
+      ExecutorService exec, int finishLineDistance, boolean boost) 
   {
     System.out.println("The race begins!");
     System.out.println("");
 
+    Function<Horse, HorseMover> determineBoost = h -> { 
+      if (boost) { 
+        return new LastPlaceBoostHorseMover(h, race, finishLineDistance, DEFAULT_OUTPUT);
+      } else {
+        return new NoBoostHorseMover(h, race, finishLineDistance, DEFAULT_OUTPUT);
+      }
+    }; 
+
     Set<Callable<HorseTime>> finishLineMovers = 
       race.stream()
-          .map(h -> new LastPlaceBoostHorseMover(h, race, finishLineDistance, DEFAULT_OUTPUT))
+          .map(determineBoost)
           .collect(Collectors.toSet());
 
     Function<Future<HorseTime>, HorseTime> getHorseTime = f -> {
