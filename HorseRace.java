@@ -2,17 +2,17 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class HorseLeaderboard {
-  private PriorityQueue<Horse> board;
+public class HorseRace{
+  private PriorityQueue<Horse> leaderboard;
 
-  public HorseLeaderboard() {
-    board = new PriorityQueue();
+  public HorseRace() {
+    leaderboard = new PriorityQueue();
   }
 
   public synchronized void add(Horse horse) {
-    Horse oldLastPlacer = board.isEmpty() ? horse : getLastPlacer(); 
+    Horse oldLastPlacer = leaderboard.isEmpty() ? horse : getLastPlacer(); 
 
-    board.add(horse);
+    leaderboard.add(horse);
 
     updateLastPlacer(oldLastPlacer);
   }
@@ -20,15 +20,15 @@ public class HorseLeaderboard {
   public synchronized void update(Horse horse) {
     Horse oldLastPlacer = getLastPlacer();
 
-    if (board.remove(horse)) {
-      board.add(horse);
+    if (leaderboard.remove(horse)) {
+      leaderboard.add(horse);
     }
 
     updateLastPlacer(oldLastPlacer);
   }
 
   private synchronized Horse getLastPlacer() {
-    return board.peek();
+    return leaderboard.peek();
   }
 
   private synchronized void updateLastPlacer(Horse oldLastPlacer) {
@@ -39,10 +39,10 @@ public class HorseLeaderboard {
   }
 
   public synchronized int size() {
-    return board.size();
+    return leaderboard.size();
   }
 
   public synchronized Stream<Horse> stream() {
-    return board.stream();
+    return leaderboard.stream();
   }
 }

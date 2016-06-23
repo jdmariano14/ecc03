@@ -8,21 +8,21 @@ public class Exercise3 {
   private static final Consumer<String> DEFAULT_OUTPUT = System.out::println;
 
   public static void main(String [] args) {
-    HorseLeaderboard leaderboard = new HorseLeaderboard();
+    HorseRace race = new HorseRace();
 
     Stream.generate(() -> new Horse(-10))
           .limit(10)
           .peek(h -> h.determineHealth(DEFAULT_OUTPUT))
           .filter(h -> h.isHealthy())
-          .forEach(h -> leaderboard.add(h));
+          .forEach(h -> race.add(h));
 
     System.out.println("");
 
-    ExecutorService pool = Executors.newFixedThreadPool(leaderboard.size());
+    ExecutorService pool = Executors.newFixedThreadPool(race.size());
 
     Set<Callable<HorseTime>> startingLineMovers =
-      leaderboard.stream()
-      .map(h -> new BarnToStartHorseMover(h, leaderboard, 0, DEFAULT_OUTPUT))
+      race.stream()
+      .map(h -> new BarnToStartHorseMover(h, race, 0, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     try {
@@ -36,8 +36,8 @@ public class Exercise3 {
     System.out.println("");
 
     Set<Callable<HorseTime>> finishLineMovers = 
-      leaderboard.stream()
-      .map(h -> new StartToFinishHorseMover(h, leaderboard, 100, DEFAULT_OUTPUT))
+      race.stream()
+      .map(h -> new StartToFinishHorseMover(h, race, 100, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     Function<Future<HorseTime>, HorseTime> getHorseTime = f -> {
