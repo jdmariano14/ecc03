@@ -59,7 +59,7 @@ public class Horse implements Comparable<Horse> {
     move(min, max, bound, msg, output);
   }
 
-  public void moveWithLastPlaceBoost(int bound, Consumer<String> output) {
+  public synchronized void moveWithLastPlaceBoost(int bound, Consumer<String> output) {
     if (isLastPlace()) {
       int min = DEFAULT_MIN_SPEED + DEFAULT_BOOST;
       int max = DEFAULT_MAX_SPEED + DEFAULT_BOOST;

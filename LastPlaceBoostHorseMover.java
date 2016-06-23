@@ -9,9 +9,6 @@ public class LastPlaceBoostHorseMover extends HorseMover {
   @Override
   public void moveHorse() {
     race.update(horse);
-    
-    synchronized (race) {
-      horse.moveWithLastPlaceBoost(destination, output);
-    } 
+    horse.moveWithLastPlaceBoost(destination, output);
   }
 }
