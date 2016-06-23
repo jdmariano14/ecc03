@@ -113,7 +113,6 @@ public class Exercise3 {
       int place = 1;
       long bestTime = results.first().getTime();
       int digits = (int)(Math.log10(results.size())) + 1;
-      System.out.println(digits);
 
       for (HorseTime time : results) {
         StringBuilder result = new StringBuilder();
@@ -121,7 +120,7 @@ public class Exercise3 {
         result.append(String.format("%" + digits + "d. ", place));
         result.append("Horse ");
         result.append(String.format("%-" + digits + "d ", time.getId()));
-        result.append(String.format("%+10d ns", time.getTime() - bestTime));
+        result.append(String.format("%+12d ns", time.getTime() - bestTime));
 
         System.out.println(result);
 
