@@ -10,7 +10,7 @@ public class HorseLeaderboard {
   }
 
   public synchronized void add(Horse horse) {
-    Horse oldLastPlacer = size() < 1 ? horse : getLastPlacer(); 
+    Horse oldLastPlacer = board.isEmpty() ? horse : getLastPlacer(); 
 
     board.add(horse);
 
