@@ -22,7 +22,7 @@ public class Exercise3 {
 
     Set<Callable<HorseTime>> startingLineMovers =
       leaderboard.stream()
-      .map(h -> new HorseMover(h, leaderboard, 0, DEFAULT_OUTPUT))
+      .map(h -> new BarnToStartHorseMover(h, leaderboard, 0, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     try {
@@ -37,7 +37,7 @@ public class Exercise3 {
 
     Set<Callable<HorseTime>> finishLineMovers = 
       leaderboard.stream()
-      .map(h -> new HorseMover(h, leaderboard, 100, DEFAULT_OUTPUT))
+      .map(h -> new StartToFinishHorseMover(h, leaderboard, 100, DEFAULT_OUTPUT))
       .collect(Collectors.toSet());
 
     Function<Future<HorseTime>, HorseTime> getHorseTime = f -> {

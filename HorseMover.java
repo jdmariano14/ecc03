@@ -1,14 +1,14 @@
 import java.util.function.*;
 import java.util.concurrent.Callable;
 
-public class HorseMover implements Callable<HorseTime> {
-  private Horse horse;
-  private HorseLeaderboard board;
-  private int destination;
-  private Consumer<String> output;
+public abstract class HorseMover implements Callable<HorseTime> {
+  protected Horse horse;
+  protected HorseLeaderboard board;
+  protected int destination;
+  protected Consumer<String> output;
 
-  public HorseMover(Horse h, HorseLeaderboard board, int dest, Consumer<String> out) {
-    this.horse = h;
+  public HorseMover(Horse horse, HorseLeaderboard board, int dest, Consumer<String> out) {
+    this.horse = horse;
     this.board = board;
     this.destination = dest;
     this.output = out;
@@ -17,12 +17,11 @@ public class HorseMover implements Callable<HorseTime> {
   public HorseTime call() {
     while (horse.getPosition() < destination) {
       board.update(horse);
-
-      // synchronized (board) {
-        horse.boundedMove(destination, output);
-      // }
+      moveHorse();
     }
 
     return new HorseTime(horse.getId(), System.nanoTime());
   }
+
+  protected abstract void moveHorse();
 }

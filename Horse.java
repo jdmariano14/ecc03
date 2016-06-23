@@ -40,7 +40,7 @@ public class Horse implements Comparable<Horse> {
   }
 
   private void move(int min, int max, int bound, String msg, Consumer<String> output) {
-    int displacement = min + (int)(Math.random() * (max - min));
+    int displacement = min + (int)(Math.random() * (max - min + 1));
     int oldPos = position;
     position += displacement;
 
@@ -51,30 +51,24 @@ public class Horse implements Comparable<Horse> {
     output.accept(String.format(msg, position - oldPos, oldPos, position));
   }
 
-  private void defaultMove(int bound, Consumer<String> output) {
-    int min = 0;
-    int max = 0;
-    String msg = "";
-
-    if (isLastPlace()) {
-      min = DEFAULT_MIN_SPEED + DEFAULT_BOOST;
-      max = DEFAULT_MAX_SPEED + DEFAULT_BOOST;
-      msg = this + " moved %d, from %d to %d (with last place boost)";
-    } else {
-      min = DEFAULT_MIN_SPEED;
-      max = DEFAULT_MAX_SPEED;
-      msg = this + " moved %d, from %d to %d";
-    }
+  public void defaultMove(int bound, Consumer<String> output) {
+    int min = DEFAULT_MIN_SPEED;
+    int max = DEFAULT_MAX_SPEED;
+    String msg = this + " moved %d, from %d to %d";
 
     move(min, max, bound, msg, output);
   }
 
-  public synchronized void unboundedMove(Consumer<String> output) {
-    defaultMove(-1, output);
-  }
+  public void moveWithLastPlaceBoost(int bound, Consumer<String> output) {
+    if (isLastPlace()) {
+      int min = DEFAULT_MIN_SPEED + DEFAULT_BOOST;
+      int max = DEFAULT_MAX_SPEED + DEFAULT_BOOST;
+      String msg = this + " moved %d, from %d to %d (with last place boost)";
 
-  public synchronized void boundedMove(int bound, Consumer<String> output) {
-    defaultMove(bound, output);
+      move(min, max, bound, msg, output);
+    } else {
+      defaultMove(bound, output);
+    }
   }
 
   public boolean isHealthy() {
@@ -85,8 +79,8 @@ public class Horse implements Comparable<Horse> {
     healthy = Math.random() > (1.0 - HEALTHY_CHANCE);
 
     String msg = healthy
-                 ? this + " is healthy."
-                 : this + " is not healthy.";
+                 ? this + " is healthy"
+                 : this + " is not healthy";
 
     output.accept(msg);
   }
