@@ -5,20 +5,8 @@ import java.util.stream.*;
 public class HorseRace {
   private PriorityQueue<Horse> leaderboard;
 
-  public HorseRace() {
-    leaderboard = new PriorityQueue();
-  }
-
   public HorseRace(PriorityQueue<Horse> leaderboard) {
     this.leaderboard = leaderboard;
-  }
-
-  public synchronized void add(Horse horse) {
-    Horse oldLastPlacer = leaderboard.isEmpty() ? horse : getLastPlacer(); 
-
-    leaderboard.add(horse);
-
-    updateLastPlacer(oldLastPlacer);
   }
 
   public synchronized void update(Horse horse) {
