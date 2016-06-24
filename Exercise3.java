@@ -19,7 +19,7 @@ public class Exercise3 {
     String boostChoice = promptUserForLine("Enable boost? (y/n) ").trim().toLowerCase();
     boolean boost = boostChoice.equals("y");
 
-    System.out.println("");
+    DEFAULT_OUTPUT.accept("");
 
     HorseRace race = new HorseRace(
       Stream.generate(() -> new Horse(-STARTING_LINE_DISTANCE))
@@ -34,7 +34,7 @@ public class Exercise3 {
 
     while (true) {
       if (!moveFromBarnToStartingLine(race, exec)) {
-        System.out.println("Something bad happened. The race is aborted.");
+        DEFAULT_OUTPUT.accept("Something bad happened. The race is aborted.");
         break;
       }
 
@@ -44,7 +44,7 @@ public class Exercise3 {
       try {
         displayRaceResults(results);
       } catch (NullPointerException e) {
-        System.out.println("Something bad happened. The race is aborted.");
+        DEFAULT_OUTPUT.accept("Something bad happened. The race is aborted.");
       }
       
       break;
@@ -54,9 +54,9 @@ public class Exercise3 {
   }
 
   private static boolean moveFromBarnToStartingLine(HorseRace race, ExecutorService exec) {
-    System.out.println("");
-    System.out.println("Healthy horses moving out from barn");
-    System.out.println("");
+    DEFAULT_OUTPUT.accept("");
+    DEFAULT_OUTPUT.accept("Healthy horses moving out from barn");
+    DEFAULT_OUTPUT.accept("");
 
     Set<Callable<HorseTime>> barnToStartMovers =
       race.stream()
@@ -69,9 +69,9 @@ public class Exercise3 {
       return false;
     }
 
-    System.out.println("");
-    System.out.println("All healthy horses at starting line");
-    System.out.println("");
+    DEFAULT_OUTPUT.accept("");
+    DEFAULT_OUTPUT.accept("All healthy horses at starting line");
+    DEFAULT_OUTPUT.accept("");
 
     return true;
   }
@@ -96,8 +96,8 @@ public class Exercise3 {
       }
     };
 
-    System.out.println("The race begins!");
-    System.out.println("");
+    DEFAULT_OUTPUT.accept("The race begins!");
+    DEFAULT_OUTPUT.accept("");
 
     Set<Callable<HorseTime>> finishLineMovers = 
       race.stream()
@@ -117,10 +117,10 @@ public class Exercise3 {
   }
 
   private static void displayRaceResults(SortedSet<HorseTime> results) {
-      System.out.println();
-      System.out.println("The race is over!");
-      System.out.println();
-      System.out.println("Race Results: ");
+      DEFAULT_OUTPUT.accept("");
+      DEFAULT_OUTPUT.accept("The race is over!");
+      DEFAULT_OUTPUT.accept("");
+      DEFAULT_OUTPUT.accept("Race Results: ");
 
       int place = 1;
       long bestTime = results.first().getTime();
@@ -134,7 +134,7 @@ public class Exercise3 {
         result.append(String.format("%-" + digits + "d ", time.getId()));
         result.append(String.format("%+12d ns", time.getTime() - bestTime));
 
-        System.out.println(result);
+        DEFAULT_OUTPUT.accept(result.toString());
 
         place++;
       }
