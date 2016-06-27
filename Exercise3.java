@@ -14,12 +14,12 @@ public class Exercise3 {
   }
 
   public static void main(String [] args) {
-    int horseCount = promptUserForInt("Enter the number of horses: ");
-    int finishLineDistance = promptUserForInt("Enter the distance to the finish line: ");
+    int horseCount = promptUserForPositiveInt("Enter the number of horses: ");
+    int finishLineDistance = promptUserForPositiveInt("Enter the distance to the finish line: ");
     String boostChoice = promptUserForLine("Enable boost? (y/n) ").trim().toLowerCase();
     boolean boost = boostChoice.equals("y");
 
-    DEFAULT_OUTPUT.accept("");
+    print("");
 
     HorseRace race = new HorseRace(
       Stream.generate(() -> new Horse(-STARTING_LINE_DISTANCE))
@@ -34,7 +34,7 @@ public class Exercise3 {
 
     while (true) {
       if (!moveFromBarnToStartingLine(race, exec)) {
-        DEFAULT_OUTPUT.accept("Something bad happened. The race is aborted.");
+        print("Something bad happened. The race is aborted.");
         break;
       }
 
@@ -44,7 +44,7 @@ public class Exercise3 {
       try {
         displayRaceResults(results);
       } catch (NullPointerException e) {
-        DEFAULT_OUTPUT.accept("Something bad happened. The race is aborted.");
+        print("Something bad happened. The race is aborted.");
       }
       
       break;
@@ -54,9 +54,9 @@ public class Exercise3 {
   }
 
   private static boolean moveFromBarnToStartingLine(HorseRace race, ExecutorService exec) {
-    DEFAULT_OUTPUT.accept("");
-    DEFAULT_OUTPUT.accept("Healthy horses moving out from barn");
-    DEFAULT_OUTPUT.accept("");
+    print("");
+    print("Healthy horses moving out from barn");
+    print("");
 
     Set<Callable<HorseTime>> barnToStartMovers =
       race.stream()
@@ -69,9 +69,9 @@ public class Exercise3 {
       return false;
     }
 
-    DEFAULT_OUTPUT.accept("");
-    DEFAULT_OUTPUT.accept("All healthy horses at starting line");
-    DEFAULT_OUTPUT.accept("");
+    print("");
+    print("All healthy horses at starting line");
+    print("");
 
     return true;
   }
@@ -96,8 +96,8 @@ public class Exercise3 {
       }
     };
 
-    DEFAULT_OUTPUT.accept("The race begins!");
-    DEFAULT_OUTPUT.accept("");
+    print("The race begins!");
+    print("");
 
     Set<Callable<HorseTime>> finishLineMovers = 
       race.stream()
@@ -117,10 +117,10 @@ public class Exercise3 {
   }
 
   private static void displayRaceResults(SortedSet<HorseTime> results) {
-      DEFAULT_OUTPUT.accept("");
-      DEFAULT_OUTPUT.accept("The race is over!");
-      DEFAULT_OUTPUT.accept("");
-      DEFAULT_OUTPUT.accept("Race Results: ");
+      print("");
+      print("The race is over!");
+      print("");
+      print("Race Results: ");
 
       int place = 1;
       long bestTime = results.first().getTime();
@@ -134,28 +134,36 @@ public class Exercise3 {
         result.append(String.format("%-" + digits + "d ", time.getId()));
         result.append(String.format("%+12d ns", time.getTime() - bestTime));
 
-        DEFAULT_OUTPUT.accept(result.toString());
+        print(result.toString());
 
         place++;
       }
   }
 
-  private static int promptUserForInt(String promptMsg) {
-    int input = Integer.MIN_VALUE;
+  private static int promptUserForPositiveInt(String promptMsg) {
+    int input = 0;
 
     do {
       try {
         input = Integer.parseInt(promptUserForLine(promptMsg));
+
+        if (input <= 0) {
+          print("Please enter a positive integer value.");
+        }
       } catch (NumberFormatException e) {
-        DEFAULT_OUTPUT.accept("Please enter an integer value.");
+        print("Please enter a positive integer value.");
       }
-    } while (input == Integer.MIN_VALUE);
+    } while (input <= 0);
 
     return input;
   }
 
   private static String promptUserForLine(String promptMsg) {
     System.out.print(promptMsg);
-    return INPUT_SCANNER.nextLine();
+    return INPUT_SCANNER.nextLine();  
+  }
+
+  private static void print(String str) {
+    DEFAULT_OUTPUT.accept(str);
   }
 }

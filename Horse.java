@@ -54,7 +54,7 @@ public class Horse implements Comparable<Horse> {
   public void defaultMove(int bound, Consumer<String> output) {
     int min = DEFAULT_MIN_SPEED;
     int max = DEFAULT_MAX_SPEED;
-    String msg = this + " moved %d, from %d to %d";
+    String msg = this + " moved %d, from %d to %d (" + System.currentTimeMillis() + ")";
 
     move(min, max, bound, msg, output);
   }
@@ -63,7 +63,7 @@ public class Horse implements Comparable<Horse> {
     if (isLastPlace()) {
       int min = DEFAULT_MIN_SPEED + DEFAULT_BOOST;
       int max = DEFAULT_MAX_SPEED + DEFAULT_BOOST;
-      String msg = this + " moved %d, from %d to %d (with last place boost)";
+      String msg = this + " moved %d, from %d to %d (with last place boost) (" + System.currentTimeMillis() + ")";
 
       move(min, max, bound, msg, output);
     } else {
